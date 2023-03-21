@@ -8,7 +8,6 @@ export const App = () => {
   return (
     <>
       <Header />
-
       <div className={styles.wrapper}>
         <Sidebar />
         <main>
