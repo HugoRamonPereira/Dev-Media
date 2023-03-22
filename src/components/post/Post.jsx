@@ -1,4 +1,6 @@
 import React from 'react';
+import { Avatar } from '../Avatar/Avatar';
+import { Comment } from '../Comment/Comment';
 import styles from './Post.module.css';
 
 export const Post = () => {
@@ -6,7 +8,7 @@ export const Post = () => {
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <img src="https://github.com/HugoRamonPereira.png" />
+          <Avatar src="https://github.com/diego3g.png" />
           <div className={styles.authorInfo}>
             <p>Hugo Ramon</p>
             <span>Frontend Developer</span>
@@ -30,6 +32,20 @@ export const Post = () => {
           <a href="">#frontend </a>{' '}
           <a href="">#webdevelopent</a>{' '}
         </p>
+      </div>
+      <form className={styles.commentForm}>
+        <strong>Leave your feedback</strong>
+        <textarea
+          placeholder='Leave a comment'
+        />
+        <footer>
+          <button type='submit'>Publish</button>
+        </footer>
+      </form>
+      <div className={styles.commentsList}>
+        <Comment />
+        <Comment />
+        <Comment />
       </div>
     </article>
   );
