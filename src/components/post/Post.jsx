@@ -1,51 +1,94 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar } from '../Avatar/Avatar';
 import { Comment } from '../Comment/Comment';
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import styles from './Post.module.css';
 
-export const Post = () => {
+export const Post = ({ author, publishedAt, content }) => {
+  const [comments, setComments] = useState(['What a cool post, huh?']);
+  const [newCommentText, setNewCommentText] = useState('');
+
+  const publicationDateFormatted =  format(publishedAt, 'dd \'de\' LLLL \'às\' HH:mm\'h\'', {
+    locale: ptBR
+  });
+
+  const publicationDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true
+  });
+
+  const handleCreateNewComment = (event) => {
+    event.preventDefault();
+    const newCommentText = event.target.comment.value;
+    setComments([...comments, newCommentText]);
+    setNewCommentText('');
+  };
+
+  const handleNewCommentChange = () => {
+    setNewCommentText(event.target.value);
+  };
+
+  const deleteComment = (commentToDelete) => {
+    const commentsList = comments.filter(comment => {
+      return comment !== commentToDelete;
+    });
+    setComments(commentsList);
+  };
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src="https://github.com/diego3g.png" />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <p>Hugo Ramon</p>
-            <span>Frontend Developer</span>
+            <p>{author.name}</p>
+            <span>{author.role}</span>
           </div>
         </div>
 
         <time
-          title='March, 20th at 02:19h'
-          dateTime='2023-03-20 02:19:45'
+          title={publicationDateFormatted}
+          dateTime={publishedAt.toISOString()}
         >
-          Published 1h ago
+          {publicationDateRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        <p>Hello guys 👋🏼</p>
-        <p>Just finished a new project, and it is pretty nice, you guys can check it at.</p>
-        <p>{' '}<a href="">ramon/alienlabs</a></p>
-        <p>
-          <a href="">#newproject </a>{' '}
-          <a href="">#frontend </a>{' '}
-          <a href="">#webdevelopent</a>{' '}
-        </p>
+        {content.map(line => {
+          if (line.type === 'paragraph') {
+            return (
+              <p key={line.content}>{line.content}</p>
+            );
+          } else if (line.type === 'link') {
+            return <p key={line.content}><a href='#'>{line.content}</a></p>;
+          }
+        })}
       </div>
-      <form className={styles.commentForm}>
+
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Leave your feedback</strong>
         <textarea
+          name='comment'
+          value={newCommentText}
           placeholder='Leave a comment'
+          onChange={handleNewCommentChange}
         />
         <footer>
           <button type='submit'>Publish</button>
         </footer>
       </form>
       <div className={styles.commentsList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map(comment => {
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          );
+        })}
       </div>
     </article>
   );
