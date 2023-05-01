@@ -18,15 +18,15 @@ export const Post = ({ author, publishedAt, content }) => {
     addSuffix: true
   });
 
-  const handleCreateNewComment = (event) => {
-    event.preventDefault();
-    const newCommentText = event.target.comment.value;
+  const handleCreateNewComment = (e) => {
+    e.preventDefault();
+    const newCommentText = e.target.comment.value;
     setComments([...comments, newCommentText]);
     setNewCommentText('');
   };
 
-  const handleNewCommentChange = () => {
-    setNewCommentText(event.target.value);
+  const handleNewCommentChange = (e) => {
+    setNewCommentText(e.target.value);
   };
 
   const deleteComment = (commentToDelete) => {
@@ -35,6 +35,8 @@ export const Post = ({ author, publishedAt, content }) => {
     });
     setComments(commentsList);
   };
+
+  const isNewCommentEmpty = newCommentText.length === 0;
 
   return (
     <article className={styles.post}>
@@ -76,7 +78,12 @@ export const Post = ({ author, publishedAt, content }) => {
           onChange={handleNewCommentChange}
         />
         <footer>
-          <button type='submit'>Publish</button>
+          <button
+            type='submit'
+            disabled={isNewCommentEmpty}
+          >
+            Publish
+          </button>
         </footer>
       </form>
       <div className={styles.commentsList}>
